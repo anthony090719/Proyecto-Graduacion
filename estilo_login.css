@@ -1,0 +1,77 @@
+/* Estilo para el fondo */
+body {
+    background-color: #3498db; 
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo para el contenedor principal */
+#message-container {
+    text-align: center;
+    font-size: 28px;
+    color: #fff; /* Color del texto en el mensaje */
+    margin-top: 20px;
+}
+
+/* Estilo para el contenedor del formulario de inicio de sesión y registro */
+#login-form-container, #register-form-container {
+    background-color: #fff; /* Color de fondo del formulario */
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo para el título del formulario */
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #333; 
+}
+
+/* Estilo para etiquetas y campos de entrada */
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333; 
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Estilo para el botón */
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF; /* color del botón */
+    color: #fff; /* Color del texto en el botón */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3; /* Cambia el color del botón al pasar el cursor */
+}
+
+/* Estilo para el enlace de registro */
+a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #007BFF; /* color del enlace */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

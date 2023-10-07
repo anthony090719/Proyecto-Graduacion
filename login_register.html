@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inicio de Sesion y Registro de Usuario</title>
+    <link rel="stylesheet" type="text/css" href="estilo_login.css">
+</head>
+<body>
+    <div id="message-container">SENSOR DE CO2</div>
+    <div id="login-form-container">
+        <!-- código del formulario de inicio de sesión -->
+        <h1>Inicio de Sesion</h1>
+        <form id="loginForm" method="post" action="login.php" onsubmit="return setLoggedIn()">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Contrasena:</label>
+            <input type="password" id="password" name="password" required><br>
+            <label for="role">Rol:</label>
+            <select id="role" name="role">
+                <option value="cliente">Cliente</option>
+                <option value="administrador">Administrador</option>
+            </select><br>
+            <input type="submit" value="Iniciar Sesion">
+        </form>
+        <a href="#" onclick="showRegisterForm()">Registrarse</a>
+    </div>
+
+    <div id="register-form-container" style="display: none;">
+        <!-- formulario de registro -->
+        <h1>Registro de Usuario</h1>
+        <form id="registroForm" method="post" action="registrar.php">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Contrasena:</label>
+            <input type="password" id="password" name="password" required><br>
+            <label for="role">Rol:</label>
+            <select id="role" name="role">
+                <option value="cliente">Cliente</option>
+                <option value="administrador">Administrador</option>
+            </select><br>
+            <input type="submit" value="Registrarse">
+        </form>
+        <a href="#" onclick="showLoginForm()">Volver al inicio de sesion</a>
+    </div>
+
+    <script>
+        function showLoginForm() {
+            document.getElementById("login-form-container").style.display = "block";
+            document.getElementById("register-form-container").style.display = "none";
+        }
+
+        function showRegisterForm() {
+            document.getElementById("login-form-container").style.display = "none";
+            document.getElementById("register-form-container").style.display = "block";
+        }
+
+        // Establecer la variable de sesión "loggedIn" antes de enviar el formulario
+        function setLoggedIn() {
+            sessionStorage.setItem("loggedIn", "true");
+            return true; // Permite el envío del formulario
+        }
+    </script>
+</body>
+</html>
+
+
+

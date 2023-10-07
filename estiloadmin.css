@@ -1,0 +1,64 @@
+/* Estilo para el fondo */
+body {
+    background-color: #f5f5f5; /* Cambia el color de fondo como desees */
+}
+
+/* Estilo para el título */
+h1 {
+    text-align: center;
+    font-size: 36px;
+    color: #333; /* Cambia el color del título */
+    margin-top: 20px;
+}
+
+/* Estilo para los botones */
+button {
+    background-color: #007BFF; /* Cambia el color del botón */
+    color: #fff; /* Color del texto en el botón */
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3; /* Cambia el color del botón al pasar el cursor */
+}
+
+/* Estilo para el desplegable */
+#sensorType {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+/* Estilo para el formulario de fechas */
+form {
+    text-align: center;
+}
+
+/* Estilo para el contenedor de la tabla */
+#tablaContainer {
+    margin-top: 20px;
+}
+
+/* Estilo para la tabla */
+#co2Table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#co2Table th, #co2Table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+/* Estilo para la tabla al hacer clic en el botón "Mostrar Datos" */
+#tablaContainer.show-table {
+    display: block;
+}

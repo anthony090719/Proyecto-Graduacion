@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vista_Cliente</title>
+    <link rel="stylesheet" type="text/css" href="estilocliente.css"> 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Verificar si la variable de sesión está establecida
+        if (!sessionStorage.getItem("loggedIn")) {
+            // Si no está establecida, redirige a login_register.html
+            window.location.href = "http://localhost/login_register.html";
+        }
+
+		// Función para cerrar la sesión
+        function cerrarSesion() {
+            sessionStorage.removeItem("loggedIn");
+            // Redirigir al usuario a la página de inicio de sesión
+            window.location.href = "http://localhost/login_register.html";
+        }
+
+    </script>
+
+</head>
+<body>
+	<h1>Monitoreo de Niveles de CO2</h1>
+	<button onclick="cerrarSesion()">Cerrar Sesion</button>
+	<canvas id="co2Chart"></canvas>
+	<form>
+		<label for="fechaInicio">Fecha de inicio:</label>
+		<input type="date" id="fechaInicio" name="fechaInicio">
+		<label for="fechaFin">Fecha de fin:</label>
+		<input type="date" id="fechaFin" name="fechaFin">
+		<input type="submit" value="Mostrar grafica">
+	</form>
+
+	<button id="visualizarTabla">Visualizar tabla</button>
+
+	<div id="tablaContainer" style="display: none;">
+    <table id="co2Table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>CO2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Recorrer los datos y mostrar todas las filas
+            foreach ($data as $row) {
+                $fecha = date('Y-m-d', strtotime($row['created_at']));
+                $co2 = $row['field1'];
+            ?>
+                <tr>
+                    <td><?php echo $fecha; ?></td>
+                    <td><?php echo $co2; ?></td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+
+    <!-- Agregar un elemento de audio oculto para reproducir la alarma -->
+    <audio id="alarmAudio" style="display: none">
+        <source src="alerta.mp3" type="audio/mpeg">
+    </audio>
+
+	<script>
+		// Variables con los datos de tu canal y clave de lectura de ThingSpeak
+		var channelId = 2061125;
+		var readApiKey = "7Q49OISGCTDWLNAV";
+
+		// Función que obtiene los datos de ThingSpeak y muestra la gráfica
+		function obtenerDatosGrafica(fechaInicio, fechaFin) {
+			var url = "https://api.thingspeak.com/channels/" + channelId + "/feeds.json?api_key=" + readApiKey + "&start=" + fechaInicio + "&end=" + fechaFin;
+
+			$.getJSON(url, function(data) {
+				var labels = [];
+				var values = [];
+
+				$.each(data.feeds, function(index, value) {
+					labels.push(value.created_at);
+					values.push(value.field1);
+				});
+
+				// Crear la gráfica con Chart.js
+				var ctx = document.getElementById('co2Chart').getContext('2d');
+				var chart = new Chart(ctx, {
+				    type: 'line',
+				    data: {
+				        labels: labels,
+				        datasets: [{
+				            label: 'CO2',
+				            data: values,
+				            backgroundColor: 'rgba(255, 0, 0, 0.2)',
+							borderColor: 'rgba(255, 0, 0, 1)',
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero: true
+				                }
+				            }]
+				        }
+				    }
+				});
+
+                // Verificar si el nivel de CO2 supera el límite (1000 ppm) y activar la alarma si es necesario
+                var alarmTriggered = values.some(value => value > 1000);
+                if (alarmTriggered) {
+                    activarAlarma();
+                }
+			});
+		}
+
+        // Función que activa la alarma
+		function activarAlarma() {
+			var audioElement = document.getElementById('alarmAudio');
+			audioElement.play();
+			alert('¡Peligro! Nivel de CO2 supera 1000 ppm.');
+		}
+
+		// Función que obtiene los datos de ThingSpeak y los muestra en la tabla
+		function obtenerDatosTabla() {
+    		var url = "https://api.thingspeak.com/channels/" + channelId + "/feeds.json?api_key=" + readApiKey + "&results=10"; // Cambia "results" a 10 para obtener los 10 datos más recientes
+
+    		$.getJSON(url, function(data) {
+        		var tableBody = $('#co2Table tbody');
+        		tableBody.empty(); // Limpia la tabla antes de agregar nuevos datos
+
+        		$.each(data.feeds, function(index, value) {
+           		 var row = $('<tr>');
+				var dateCell = $('<td>').text(value.created_at);
+				var co2Cell = $('<td>').text(value.field1);
+
+            	row.append(dateCell, co2Cell);
+            	tableBody.append(row);
+       		 });
+
+       		 $('#tablaContainer').show();
+    	});
+	}
+
+		// Obtener los datos del formulario al enviarlo y llamar a las funciones correspondientes
+		$('form').submit(function(event) {
+			event.preventDefault();
+			var fechaInicio = $('#fechaInicio').val();
+			var fechaFin = $('#fechaFin').val();
+			obtenerDatosGrafica(fechaInicio, fechaFin);
+		});
+
+		// Mostrar tabla al hacer clic en el botón "Visualizar tabla"
+        $('#visualizarTabla').click(function(event) {
+        	event.preventDefault();
+        	obtenerDatosTabla();
+        });
+	</script>
+</body>
+</html>
