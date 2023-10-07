@@ -14,13 +14,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"];
     $role = $_POST["role"];
 
-    $sql = "INSERT INTO usuarios (username, password, role) VALUES ('$username', '$password', '$role')";
-    if ($conn->query($sql) === TRUE) {
+    // Utiliza una consulta parametrizada
+    $sql = "INSERT INTO usuarios (username, password, role) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+
+    // Vincula los parámetros
+    $stmt->bind_param("sss", $username, $password, $role);
+
+    if ($stmt->execute()) {
         echo "Usuario registrado correctamente.";
     } else {
-        echo "Error al registrar el usuario: " . $conn->error;
+        echo "Error al registrar el usuario: " . $stmt->error;
     }
 
+    $stmt->close();
     $conn->close();
 }
 ?>
