@@ -11,8 +11,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $username = $_POST["username"];
-    $password = $_POST["password"];
+    $raw_password = $_POST["password"];
     $role = $_POST["role"];
+
+    // Validar que la contraseña no esté vacía
+    if (empty($raw_password)) {
+        echo "La contraseña no puede estar vacía.";
+        exit(); // Salir del script si la contraseña está vacía
+    }
+
+    // Generar un hash seguro de la contraseña
+    $password = password_hash($raw_password, PASSWORD_BCRYPT);
 
     // Utiliza una consulta parametrizada
     $sql = "INSERT INTO usuarios (username, password, role) VALUES (?, ?, ?)";
@@ -31,4 +40,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
-

@@ -13,11 +13,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $username = $_POST["username"];
-    $password = $_POST["password"];
+    $raw_password = $_POST["password"];
     $role = $_POST["role"];
 
-    $sql = "SELECT * FROM usuarios WHERE username='$username' AND password='$password' AND role='$role'";
-    $result = $conn->query($sql);
+    // Validar que la contraseña no esté vacía
+    if (empty($raw_password)) {
+        echo "La contraseña no puede estar vacía.";
+        exit(); // Salir del script si la contraseña está vacía
+    }
+
+    // Generar un hash seguro de la contraseña
+    $password = password_hash($raw_password, PASSWORD_DEFAULT);
+
+    // Utiliza consultas parametrizadas para evitar la inyección SQL
+    $sql = "SELECT * FROM usuarios WHERE username=? AND password=? AND role=?";
+    $stmt = $conn->prepare($sql);
+
+    // Vincula los parámetros
+    $stmt->bind_param("sss", $username, $password, $role);
+
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
         $_SESSION["username"] = $username;
@@ -31,9 +47,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         exit();
     } else {
-        echo "<p>Credenciales invalidas. Intentalo nuevamente.</p>";
+        echo "<p>Credenciales invalidas. Inténtalo nuevamente.</p>";
     }
 
+    $stmt->close();
     $conn->close();
 }
 ?>
